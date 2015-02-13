@@ -29,22 +29,21 @@ public
     EncodingConvertMap[['X_ISO_8859_1', 'UTF8']] =
       Proc.new { |str| str.unpack('C*').pack('U*') }
     begin
-      require 'xsd/iconvcharset'
       @internal_encoding = 'UTF8'
       sjtag = (/(mswin|bccwin|mingw|cygwin|emx)/ =~ RUBY_PLATFORM) ? 'cp932' :
         'shift_jis'
       EncodingConvertMap[['UTF8', 'EUC' ]] =
-        Proc.new { |str| IconvCharset.safe_iconv("euc-jp", "utf-8", str) }
+        Proc.new { |str| str.encode('utf-8') }
       EncodingConvertMap[['EUC' , 'UTF8']] =
-        Proc.new { |str| IconvCharset.safe_iconv("utf-8", "euc-jp", str) }
+        Proc.new { |str| str.encode('euc-jp') }
       EncodingConvertMap[['EUC' , 'SJIS']] =
-        Proc.new { |str| IconvCharset.safe_iconv(sjtag, "euc-jp", str) }
+        Proc.new { |str| str.encode('euc-jp') }
       EncodingConvertMap[['UTF8', 'SJIS']] =
-        Proc.new { |str| IconvCharset.safe_iconv(sjtag, "utf-8", str) }
+        Proc.new { |str| str.encode('utf-8') }
       EncodingConvertMap[['SJIS', 'UTF8']] =
-        Proc.new { |str| IconvCharset.safe_iconv("utf-8", sjtag, str) }
+        Proc.new { |str| str.encode(sjtag) }
       EncodingConvertMap[['SJIS', 'EUC' ]] =
-        Proc.new { |str| IconvCharset.safe_iconv("euc-jp", sjtag, str) }
+        Proc.new { |str| str.encode(sjtag) }
     rescue LoadError
       begin
        	require 'nkf'
